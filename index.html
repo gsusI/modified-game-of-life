@@ -195,7 +195,6 @@
             }
             return neighbors;
         }
-
         function updateGrid() {
             const newGrid = JSON.parse(JSON.stringify(grid));
             const battleMode = document.getElementById('battleMode').checked;
@@ -203,6 +202,7 @@
             for (let x = 0; x < gridSize; x++) {
                 for (let y = 0; y < gridSize; y++) {
                     const cell = grid[x][y];
+                    const newCell = newGrid[x][y];
                     const neighbors = countAliveNeighbors(x, y);
                     const aliveCount = neighbors.length;
                     const surviveBit = parseInt(cell.geneticCode[aliveCount], 2);
@@ -212,29 +212,37 @@
                         neighbors.forEach(neighbor => {
                             const neighborStrength = neighbor.geneticCode.split('').reduce((a, b) => a + parseInt(b), 0);
                             if (cellStrength > neighborStrength) {
-                                neighbor.geneticCode = cell.geneticCode;
+                                newCell.geneticCode = cell.geneticCode;
                             } else if (cellStrength < neighborStrength) {
-                                cell.geneticCode = neighbor.geneticCode;
+                                newCell.geneticCode = neighbor.geneticCode;
                             }
                         });
                     }
 
-                    if (Math.random() < (battleMode ? 0.005 : 0.01)) {
-                        const randomBit = Math.floor(Math.random() * 8);
-                        cell.geneticCode = cell.geneticCode.substring(0, randomBit) + (cell.geneticCode[randomBit] === '0' ? '1' : '0') + cell.geneticCode.substring(randomBit + 1);
-                    }
-
                     if (cell.alive) {
                         if (surviveBit !== 1) {
-                            newGrid[x][y].alive = false;
+                            newCell.alive = false;
                         }
-
                     } else if (aliveCount === 3) {
-                        newGrid[x][y].alive = true;
-                        newGrid[x][y].geneticCode = neighbors[Math.floor(Math.random() * neighbors.length)].geneticCode;
+                        newCell.alive = true;
+                        if (neighbors.length > 0) {
+                            newCell.geneticCode = neighbors[Math.floor(Math.random() * neighbors.length)].geneticCode;
+                        }
                     }
                 }
             }
+
+            // Apply random mutations to newGrid
+            for (let x = 0; x < gridSize; x++) {
+                for (let y = 0; y < gridSize; y++) {
+                    const newCell = newGrid[x][y];
+                    if (Math.random() < (battleMode ? 0.005 : 0.01)) {
+                        const randomBit = Math.floor(Math.random() * 8);
+                        newCell.geneticCode = newCell.geneticCode.substring(0, randomBit) + (newCell.geneticCode[randomBit] === '0' ? '1' : '0') + newCell.geneticCode.substring(randomBit + 1);
+                    }
+                }
+            }
+
             grid = newGrid;
         }
 
