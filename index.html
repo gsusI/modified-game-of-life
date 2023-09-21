@@ -122,7 +122,7 @@
                 for (let y = 0; y < gridSize; y++) {
                     const geneticCode = randomGeneticCode();
                     grid[x][y] = {
-                        alive: Math.random() < initialPop / 100,
+                        alive: false,
                         geneticCode: geneticCode
                     };
                     if (!colorMap[geneticCode]) {
@@ -130,7 +130,27 @@
                     }
                 }
             }
+
+            // Randomly select starting points for clusters
+            const numClusters = Math.floor((gridSize * gridSize * initialPop) / 10000);
+            for (let i = 0; i < numClusters; i++) {
+                const x = Math.floor(Math.random() * gridSize);
+                const y = Math.floor(Math.random() * gridSize);
+
+                // Create a cluster around the starting point
+                for (let dx = -1; dx <= 1; dx++) {
+                    for (let dy = -1; dy <= 1; dy++) {
+                        const nx = x + dx;
+                        const ny = y + dy;
+                        if (nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize) {
+                            grid[nx][ny].alive = true;
+                        }
+                    }
+                }
+            }
         }
+
+
 
         function drawGrid() {
             const cellSize = canvas.width / gridSize;
