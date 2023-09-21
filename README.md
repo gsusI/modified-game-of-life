@@ -33,7 +33,7 @@ You can play the game online here: [Modified Game of Life](https://gsusi.github.
 
 1. Clone this repository:  
    ```
-   git clone https://github.com/gsusI/modified-game-of-life.git
+   git clone https://github.com/gsusI/modified-game-of-life.git your-repo-name
    ```
 2. Navigate to the repository folder:  
    ```
